@@ -6,4 +6,5 @@ abstract class Routes {
   static const String home = '/home';
   static const String emailVerification = '/emailVerification';
   static const String login = '/login';
+  static const String auth = '/auth';
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_app/presentation/auth/pages/auth_page.dart';
 import 'package:firebase_app/presentation/auth/pages/email_verification_page.dart';
 import 'package:firebase_app/presentation/auth/pages/login_page.dart';
 import 'package:firebase_app/presentation/auth/pages/sign_up_page.dart';
@@ -15,5 +16,6 @@ abstract class AppPages {
     Routes.home: (_) => const HomePage(),
     Routes.emailVerification: (_) => EmailVerificationPage(),
     Routes.login: (_) => LoginPage(),
+    Routes.auth: (_) => const AuthPage(),
   };
 }

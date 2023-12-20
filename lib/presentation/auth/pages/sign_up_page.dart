@@ -1,6 +1,9 @@
 import 'package:firebase_app/core/constants/constants.dart';
 import 'package:firebase_app/core/routes/app_routes.dart';
+import 'package:firebase_app/presentation/auth/cubit/auth_cubit.dart';
+import 'package:firebase_app/widgets/messenger.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignUpPage extends StatelessWidget {
   SignUpPage({super.key});
@@ -11,136 +14,178 @@ class SignUpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(),
-              const Text(
-                'Register',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF575DFB),
+    return BlocProvider(
+      create: (context) => AuthCubit(),
+      child: Scaffold(
+        appBar: AppBar(),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(),
+                const Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF575DFB),
+                  ),
                 ),
-              ),
-              Constants.verticalPadding,
-              RichText(
-                text: const TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Create an ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
+                Constants.verticalPadding,
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Create an ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: 'account',
-                      style: TextStyle(
-                        color: Color(0xFF575DFB),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
+                      TextSpan(
+                        text: 'account',
+                        style: TextStyle(
+                          color: Color(0xFF575DFB),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: ' to access all the features of ',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 16.0,
+                      TextSpan(
+                        text: ' to access all the features of ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: 'Maxpense!',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 16.0,
+                      TextSpan(
+                        text: 'Maxpense!',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Constants.verticalPadding,
-                    const Text('Email'),
-                    const SizedBox(height: 5),
-                    InputField(
-                      controller: emailController,
-                      hintText: 'Ex: abc@example.com',
-                      icon: Icons.apple,
-                    ),
-                    Constants.verticalPadding,
-                    const Text('Your Name'),
-                    const SizedBox(height: 5),
-                    InputField(
-                      controller: nameController,
-                      hintText: 'Ex: Saul Ramirez',
-                      icon: Icons.person_outline,
-                    ),
-                    Constants.verticalPadding,
-                    const Text('Your Password'),
-                    const SizedBox(height: 5),
-                    InputField(
-                      controller: passwordController,
-                      hintText: '******',
-                      icon: Icons.lock_outline,
-                    ),
-                  ],
+                Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Constants.verticalPadding,
+                      const Text('Email'),
+                      const SizedBox(height: 5),
+                      InputField(
+                        controller: emailController,
+                        hintText: 'Ex: abc@example.com',
+                        icon: Icons.apple,
+                      ),
+                      Constants.verticalPadding,
+                      const Text('Your Name'),
+                      const SizedBox(height: 5),
+                      InputField(
+                        controller: nameController,
+                        hintText: 'Ex: Saul Ramirez',
+                        icon: Icons.person_outline,
+                      ),
+                      Constants.verticalPadding,
+                      const Text('Your Password'),
+                      const SizedBox(height: 5),
+                      InputField(
+                        controller: passwordController,
+                        hintText: '******',
+                        icon: Icons.lock_outline,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 70),
-              SizedBox(
-                height: 57,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, Routes.emailVerification);
+                const SizedBox(height: 70),
+                BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    if (state is AuthError) {
+                      MyMessenger.showMessenger(
+                        context,
+                        state.error,
+                        Colors.red,
+                      );
+                    }
+                    if (state is AuthSuccess) {
+                      Navigator.pushReplacementNamed(context, Routes.auth);
+                    }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Constants.primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Register',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-              Constants.verticalPadding,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'Already have an account?',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  InkWell(
-                    child: const Text(
-                      ' Login',
-                      style: TextStyle(
-                        color: Constants.primaryColor,
-                        fontSize: 16,
+                  builder: (context, state) {
+                    if (state is AuthLoading) {
+                      return SizedBox(
+                        height: 57,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Constants.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            'Loading...',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      height: 57,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<AuthCubit>().signUserUp(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Constants.primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Register',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
+                    );
+                  },
+                ),
+                Constants.verticalPadding,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Already have an account?',
+                      style: TextStyle(fontSize: 16),
                     ),
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, Routes.login);
-                    },
-                  ),
-                ],
-              ),
-            ],
+                    InkWell(
+                      child: const Text(
+                        ' Login',
+                        style: TextStyle(
+                          color: Constants.primaryColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacementNamed(context, Routes.login);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
